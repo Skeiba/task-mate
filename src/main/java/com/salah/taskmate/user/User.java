@@ -1,4 +1,4 @@
-package com.salah.taskmate.user.model;
+package com.salah.taskmate.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -14,6 +14,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class User {
     @Id
