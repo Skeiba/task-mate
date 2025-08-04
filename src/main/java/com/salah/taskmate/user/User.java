@@ -1,12 +1,11 @@
 package com.salah.taskmate.user;
 
+import com.salah.taskmate.task.Task;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,23 +21,20 @@ public class User {
     @Column(columnDefinition = "uuid",  nullable = false, updatable = false)
     private UUID id;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 5,  max = 50, message = "Username must be between 5 and 50 characters")
     @Column(unique = true, nullable = false)
     private String username;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
     @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
     @Column(nullable = false)
     private String password;
 
     @Column(name = "created_at", nullable = false,  updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks;
 
     @PrePersist
     public void prePersist() {
