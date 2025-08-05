@@ -39,7 +39,7 @@ public class TaskServiceImpl implements  TaskService {
             throw new IllegalArgumentException("Due date must be in the future");
         }
 
-        User user = userService.findById(userId);
+        User user = userService.findUserById(userId);
 
         Task task = taskMapper.toEntity(taskRequest, user);
 

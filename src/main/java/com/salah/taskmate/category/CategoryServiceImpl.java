@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse createCategory(UUID userId, CategoryRequest categoryRequest) {
-        User user = userService.findById(userId);
+        User user = userService.findUserById(userId);
 
         Category category = categoryMapper.toEntity(categoryRequest, user);
 
