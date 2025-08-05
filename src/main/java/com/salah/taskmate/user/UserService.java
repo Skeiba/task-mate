@@ -1,11 +1,7 @@
 package com.salah.taskmate.user;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import java.util.UUID;
 
-@Service
-@Transactional
-@RequiredArgsConstructor
-public class UserService {
+public interface UserService {
+    User findById(UUID userId);
 }
