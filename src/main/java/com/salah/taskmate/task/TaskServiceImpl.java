@@ -53,6 +53,10 @@ public class TaskServiceImpl implements  TaskService {
         Task task = taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(TASK_NOT_FOUND_MESSAGE + taskId));
 
+        if (taskRequest.getDueDate() != null && taskRequest.getDueDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Due date must be in the future");
+        }
+
         task.setTitle(taskRequest.getTitle());
         task.setContent(taskRequest.getContent());
         task.setDueDate(taskRequest.getDueDate());
