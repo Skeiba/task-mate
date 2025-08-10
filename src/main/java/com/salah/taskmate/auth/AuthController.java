@@ -27,7 +27,7 @@ public class AuthController {
         AuthResponse response = authService.register(request);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("message", "User registered successfully");
+        body.put("register message", "User registered successfully");
         body.put("token", response.getToken());
 
         return ResponseEntity.ok(body);
@@ -38,7 +38,7 @@ public class AuthController {
         AuthResponse response = authService.login(request);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("message", "Login successful");
+        body.put("login message", "Login successful");
         body.put("token", response.getToken());
 
         return ResponseEntity.ok(body);
@@ -47,12 +47,12 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         passwordService.forgotPassword(request);
-        return ResponseEntity.ok(Map.of("message", "Reset link sent"));
+        return ResponseEntity.ok(Map.of("fp message", "Reset link sent"));
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody ResetPasswordRequest request) {
         passwordService.resetPassword(request);
-        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        return ResponseEntity.ok(Map.of("rp message", "Password updated successfully"));
     }
 }
