@@ -1,5 +1,7 @@
 package com.salah.taskmate.shared.exception;
 
+import com.salah.taskmate.shared.api.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,47 +10,81 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public static final String ERROR = "error";
-    public static final String MESSAGE = "message";
-    public static final String TIMESTAMP = "timestamp";
-    public static final String STATUS = "status";
-
+    // Validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex
-                .getBindingResult()
+    public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException ex) {
+        var errors = ex.getBindingResult()
                 .getFieldErrors()
-                .forEach(fieldError ->
-                        errors.put(fieldError.getField(), fieldError.getDefaultMessage())
+                .stream()
+                .collect(Collectors.toMap(
+                        fieldError -> fieldError.getField(),
+                        fieldError -> fieldError.getDefaultMessage()
+                ));
+
+        ApiResponse<Object> response = new ApiResponse<>(
+                false,
+                "Validation failed",
+                errors,
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value()
         );
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    // User already exists
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> handleUserAlreadyExists(UserAlreadyExistsException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put(ERROR, "Registration Failed");
-        response.put(MESSAGE, ex.getMessage());
-        response.put(TIMESTAMP, LocalDateTime.now());
-        response.put(STATUS, HttpStatus.CONFLICT.value());
-
+    public ResponseEntity<ApiResponse<Void>> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                ex.getMessage(),
+                null,
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value()
+        );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleUsernameNotFound(UsernameNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put(ERROR, "Login Failed");
-        response.put(MESSAGE, "Invalid email or password");
-        response.put(TIMESTAMP, LocalDateTime.now());
-        response.put(STATUS, HttpStatus.UNAUTHORIZED.value());
 
+    // Username not found
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUsernameNotFound(UsernameNotFoundException ex) {
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                "Invalid email or password",
+                null,
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value()
+        );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    // Entity not found (activate/deactivate)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleEntityNotFound(EntityNotFoundException ex) {
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                ex.getMessage(),
+                null,
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    // Fallback for any unexpected errors
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleGeneralError(Exception ex) {
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                "An unexpected error occurred",
+                null,
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
