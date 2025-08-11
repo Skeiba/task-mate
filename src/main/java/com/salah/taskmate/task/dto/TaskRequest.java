@@ -1,14 +1,13 @@
 package com.salah.taskmate.task.dto;
 
-import com.salah.taskmate.shared.enums.TaskPriority;
-import com.salah.taskmate.shared.enums.TaskStatus;
+import com.salah.taskmate.task.enums.TaskPriority;
+import com.salah.taskmate.task.enums.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -30,5 +29,5 @@ public class TaskRequest {
 
     private TaskPriority priority = TaskPriority.MEDIUM;
 
-    private UUID userId;
+//    private UUID userId;
 }

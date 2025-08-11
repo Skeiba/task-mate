@@ -1,5 +1,6 @@
 package com.salah.taskmate.user.dto;
 
+import com.salah.taskmate.user.enums.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,4 +15,6 @@ public class UserResponse {
     private String username;
     private String email;
     private LocalDateTime createdAt;
+    private Role role;
+    private boolean enabled;
 }

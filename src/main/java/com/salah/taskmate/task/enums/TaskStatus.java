@@ -1,4 +1,4 @@
-package com.salah.taskmate.shared.enums;
+package com.salah.taskmate.task.enums;
 
 public enum TaskStatus {
     PENDING,

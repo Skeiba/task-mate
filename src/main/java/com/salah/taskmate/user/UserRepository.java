@@ -1,5 +1,6 @@
 package com.salah.taskmate.user;
 
+import com.salah.taskmate.user.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByEmail(String email);
 
     boolean existsByUsername(String username);
+
+    boolean existsByRole(Role role);
 }

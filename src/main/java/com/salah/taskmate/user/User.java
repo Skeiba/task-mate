@@ -1,6 +1,7 @@
 package com.salah.taskmate.user;
 
 import com.salah.taskmate.task.Task;
+import com.salah.taskmate.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,6 +36,11 @@ public class User {
 
     @Column(name = "created_at", nullable = false,  updatable = false)
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Role role = Role.USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;

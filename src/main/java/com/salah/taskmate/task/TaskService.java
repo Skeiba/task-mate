@@ -1,7 +1,7 @@
 package com.salah.taskmate.task;
 
-import com.salah.taskmate.shared.enums.TaskPriority;
-import com.salah.taskmate.shared.enums.TaskStatus;
+import com.salah.taskmate.task.enums.TaskPriority;
+import com.salah.taskmate.task.enums.TaskStatus;
 import com.salah.taskmate.task.dto.TaskRequest;
 import com.salah.taskmate.task.dto.TaskResponse;
 import org.springframework.data.domain.Page;

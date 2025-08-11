@@ -15,5 +15,5 @@ public class CategoryRequest {
     @NotBlank(message = "Category name is required")
     private String name;
 
-    private UUID userId;
+//    private UUID userId;
 }

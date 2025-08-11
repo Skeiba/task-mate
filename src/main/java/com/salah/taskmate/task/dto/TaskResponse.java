@@ -1,7 +1,7 @@
 package com.salah.taskmate.task.dto;
 
-import com.salah.taskmate.shared.enums.TaskPriority;
-import com.salah.taskmate.shared.enums.TaskStatus;
+import com.salah.taskmate.task.enums.TaskPriority;
+import com.salah.taskmate.task.enums.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

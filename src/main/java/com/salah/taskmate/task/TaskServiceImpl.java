@@ -2,8 +2,8 @@ package com.salah.taskmate.task;
 
 import com.salah.taskmate.category.Category;
 import com.salah.taskmate.category.CategoryService;
-import com.salah.taskmate.shared.enums.TaskPriority;
-import com.salah.taskmate.shared.enums.TaskStatus;
+import com.salah.taskmate.task.enums.TaskPriority;
+import com.salah.taskmate.task.enums.TaskStatus;
 import com.salah.taskmate.task.dto.TaskRequest;
 import com.salah.taskmate.task.dto.TaskResponse;
 import com.salah.taskmate.user.User;
