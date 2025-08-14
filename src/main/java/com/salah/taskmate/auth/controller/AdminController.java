@@ -1,4 +1,4 @@
-package com.salah.taskmate.auth;
+package com.salah.taskmate.auth.controller;
 
 import com.salah.taskmate.auth.dto.AuthResponse;
 import com.salah.taskmate.auth.dto.RegisterRequest;

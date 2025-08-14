@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+        <div style="max-width: 500px; margin: auto; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <h2 style="color: #4CAF50;">Welcome to TaskMate</h2>
+            <p>Hello [[${username}]],</p>
+    <p>We’re excited to have you on board! Start organizing your tasks and achieving your goals today.</p>
+    <p style="text-align: center;">
+        <a th:href="${appUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Get Started</a>
+    </p>
+    <hr>
+    <p style="font-size: 12px; color: #888;">TaskMate © [[${year}]]</p>
+</div>
+</body>
+</html>

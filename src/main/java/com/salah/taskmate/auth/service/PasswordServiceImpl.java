@@ -29,15 +29,24 @@ public class PasswordServiceImpl implements PasswordService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        PasswordResetToken resetToken = createAndSaveToken(user);
+
+        try {
+            emailService.sendResetPasswordEmail(user.getEmail(), resetToken.getToken());
+        } catch (RuntimeException e) {
+            tokenRepository.delete(resetToken);
+            throw new RuntimeException("Failed to send reset email", e);
+        }
+    }
+
+    private PasswordResetToken createAndSaveToken(User user) {
         String token = tokenGenerator.generateToken();
         PasswordResetToken resetToken = PasswordResetToken.builder()
                 .token(token)
                 .user(user)
                 .expiryDate(LocalDateTime.now().plusMinutes(30))
                 .build();
-        tokenRepository.save(resetToken);
-
-        emailService.sendResetPasswordEmail(user.getEmail(), token);
+        return tokenRepository.save(resetToken);
     }
 
     @Override
