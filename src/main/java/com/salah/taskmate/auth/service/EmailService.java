@@ -41,7 +41,7 @@ public class EmailService {
 
     public void sendResetPasswordEmail(String to, String token) {
         //todo : remove html after testing
-        String resetLink = frontendUrl + "/reset-password.html?token=" + token;
+        String resetLink = frontendUrl + "/reset-password?token=" + token;
 
         String content = contentBuilder.build("reset-password", Map.of(
                 "resetLink", resetLink,

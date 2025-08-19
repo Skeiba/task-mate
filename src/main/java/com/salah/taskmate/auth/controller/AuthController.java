@@ -4,6 +4,8 @@ import com.salah.taskmate.auth.dto.*;
 import com.salah.taskmate.auth.service.AuthService;
 import com.salah.taskmate.auth.service.PasswordService;
 import com.salah.taskmate.shared.annotation.StandardApiResponse;
+import com.salah.taskmate.user.dto.UserResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +25,21 @@ public class AuthController {
 
     @PostMapping("/register")
     @StandardApiResponse(message = "User registered successfully")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.register(request, response));
     }
 
     @PostMapping("/login")
     @StandardApiResponse(message = "Logged in successfully")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(request, response));
+    }
+
+    @PostMapping("/logout")
+    @StandardApiResponse(message = "Logged out successfully")
+    public ResponseEntity<Void> logout(HttpServletResponse response){
+        authService.logout(response);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/forgot-password")

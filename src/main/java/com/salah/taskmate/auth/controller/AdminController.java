@@ -1,9 +1,10 @@
 package com.salah.taskmate.auth.controller;
 
-import com.salah.taskmate.auth.dto.AuthResponse;
 import com.salah.taskmate.auth.dto.RegisterRequest;
 import com.salah.taskmate.auth.service.AuthService;
 import com.salah.taskmate.shared.annotation.StandardApiResponse;
+import com.salah.taskmate.user.dto.UserResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class AdminController {
     @PostMapping("/register")
     @PreAuthorize("hasRole('ADMIN')")
     @StandardApiResponse(message = "Admin created successfully")
-    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.registerAdmin(request));
+    public ResponseEntity<UserResponse> registerAdmin(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.registerAdmin(request, response));
     }
 }
 
