@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -19,15 +20,39 @@ import java.util.UUID;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final CategoryMapper  categoryMapper;
-    private final UserService  userService;
+    private final CategoryMapper categoryMapper;
+    private final UserService userService;
 
     private static final String CATEGORY_NOT_FOUND = "Category not found";
 
+    private static final Set<String> ALLOWED_ICONS = Set.of(
+            "briefcase", "book-open", "home", "shopping-cart", "utensils",
+            "dumbbell", "calendar", "heart", "music", "wrench"
+    );
+
+    private void validateCategoryRequest(CategoryRequest request, UUID userId) {
+        if (categoryRepository.existsByNameAndUserId(request.getName(), userId)) {
+            throw new IllegalArgumentException("Category with name '" + request.getName() + "' already exists");
+        }
+
+        if (!ALLOWED_ICONS.contains(request.getIcon())) {
+            throw new IllegalArgumentException("Invalid icon: " + request.getIcon());
+        }
+
+        if (!isValidHexColor(request.getColor())){
+            throw new IllegalArgumentException("Invalid color format: " + request.getColor());
+        }
+    }
+
+    private boolean isValidHexColor(String color) {
+        return color != null && color.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
+    }
+
     @Override
     public CategoryResponse createCategory(UUID userId, CategoryRequest categoryRequest) {
-        User user = userService.findUserById(userId);
+        validateCategoryRequest(categoryRequest, userId);
 
+        User user = userService.findUserById(userId);
         Category category = categoryMapper.toEntity(categoryRequest, user);
 
         return categoryMapper.toResponse(categoryRepository.save(category));
@@ -55,6 +80,8 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
         category.setName(categoryRequest.getName());
+        category.setIcon(categoryRequest.getIcon());
+        category.setColor(categoryRequest.getColor());
         return categoryMapper.toResponse(categoryRepository.save(category));
     }
 
@@ -76,5 +103,10 @@ public class CategoryServiceImpl implements CategoryService {
             throw new AccessDeniedException("One or more categories do not belong to this user");
         }
         return categories;
+    }
+
+    @Override
+    public Set<String> getAllowedIcons() {
+        return ALLOWED_ICONS;
     }
 }

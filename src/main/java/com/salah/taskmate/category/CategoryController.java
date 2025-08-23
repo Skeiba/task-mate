@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -63,5 +64,10 @@ public class CategoryController {
             @PathVariable UUID categoryId) {
         categoryService.deleteCategory(userDetails.getId(), categoryId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/icons")
+    @StandardApiResponse(message = "Allowed icons retrieved successfully")
+    public ResponseEntity<Set<String>> getAllowedIcons() {
+        return ResponseEntity.ok(categoryService.getAllowedIcons());
     }
 }

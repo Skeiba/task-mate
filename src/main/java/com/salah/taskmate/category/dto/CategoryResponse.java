@@ -13,4 +13,6 @@ public class CategoryResponse {
 
     private UUID id;
     private String name;
+    private String color;
+    private String icon;
 }

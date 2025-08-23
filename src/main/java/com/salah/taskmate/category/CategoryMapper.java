@@ -10,6 +10,8 @@ public class CategoryMapper {
     public Category toEntity(CategoryRequest request, User user) {
         return Category.builder()
                 .name(request.getName())
+                .icon(request.getIcon())
+                .color(request.getColor())
                 .user(user)
                 .build();
     }
@@ -18,6 +20,8 @@ public class CategoryMapper {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
+                .icon(category.getIcon())
+                .color(category.getColor())
                 .build();
     }
 }
