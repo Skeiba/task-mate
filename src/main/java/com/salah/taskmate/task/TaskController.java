@@ -98,6 +98,16 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/{taskId}/toggle-favorite")
+    @StandardApiResponse(message = "Task favoritism updated successfully")
+    public ResponseEntity<TaskResponse> toggleFavorite(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID taskId
+    ){
+        TaskResponse response = taskService.toggleFavorite(taskId, userDetails.getId());
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/{taskId}/categories")
     @StandardApiResponse(message = "Categories added to task successfully")
     public ResponseEntity<TaskResponse> addCategories(

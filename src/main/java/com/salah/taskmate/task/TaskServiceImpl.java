@@ -32,6 +32,26 @@ public class TaskServiceImpl implements  TaskService {
 
     private static final String TASK_NOT_FOUND_MESSAGE = "Task with id %s not found";
 
+    private void updateTaskStatusIfMissed(Task task){
+        if (task.getDueDate() != null
+                && task.getDueDate().isBefore(LocalDateTime.now())
+                && task.getStatus() != TaskStatus.MISSED
+                && task.getStatus() != TaskStatus.DONE
+        ) {
+            task.setStatus(TaskStatus.MISSED);
+            taskRepository.save(task);
+        }
+    }
+
+    private boolean handleDoneTask(Task task) {
+        if (task.getStatus() == TaskStatus.DONE) {
+            taskRepository.delete(task);
+            return true;
+        }
+        return false;
+    }
+
+
     @Override
     public TaskResponse createTask(UUID userId, TaskRequest taskRequest) {
 
@@ -41,12 +61,17 @@ public class TaskServiceImpl implements  TaskService {
 
         User user = userService.findUserById(userId);
 
-        Task task = taskMapper.toEntity(taskRequest, user);
+        List<Category> categories = taskRequest.getCategoryIds() != null
+                ? categoryService.getCategoriesByIdsAndUserId(taskRequest.getCategoryIds(), userId)
+                : List.of();
+
+        Task task = taskMapper.toEntity(taskRequest, user, categories);
 
         Task savedTask = taskRepository.save(task);
 
         return taskMapper.toResponse(savedTask);
     }
+
 
     @Override
     public TaskResponse updateTask(UUID taskId, UUID userId, TaskRequest taskRequest) {
@@ -62,6 +87,13 @@ public class TaskServiceImpl implements  TaskService {
         task.setDueDate(taskRequest.getDueDate());
         task.setPriority(taskRequest.getPriority());
         task.setStatus(taskRequest.getStatus());
+        task.setFavorite(taskRequest.isFavorite());
+
+        if (taskRequest.getCategoryIds() != null) {
+            List<Category> categories = categoryService.getCategoriesByIdsAndUserId(taskRequest.getCategoryIds(), userId);
+            task.getCategories().clear();
+            task.getCategories().addAll(categories);
+        }
 
         Task updatedTask = taskRepository.save(task);
 
@@ -72,6 +104,7 @@ public class TaskServiceImpl implements  TaskService {
     public TaskResponse getTaskById(UUID taskId, UUID userId) {
         Task task = taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(TASK_NOT_FOUND_MESSAGE + taskId));
+        updateTaskStatusIfMissed(task);
         return taskMapper.toResponse(task);
     }
 
@@ -79,6 +112,7 @@ public class TaskServiceImpl implements  TaskService {
     public Page<TaskResponse> getAllTasks(UUID userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Task> tasks = taskRepository.findAllByUserId(userId, pageable);
+        tasks.forEach(this::updateTaskStatusIfMissed);
         return tasks.map(taskMapper::toResponse);
     }
 
@@ -112,6 +146,15 @@ public class TaskServiceImpl implements  TaskService {
 
         List<Category> categories = categoryService.getCategoriesByIdsAndUserId(categoryIds, userId);
         task.getCategories().addAll(categories);
+        return taskMapper.toResponse(taskRepository.save(task));
+    }
+
+    @Override
+    public TaskResponse toggleFavorite(UUID taskId, UUID userId) {
+        Task task = taskRepository.findByIdAndUserId(taskId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(TASK_NOT_FOUND_MESSAGE + taskId));
+
+        task.setFavorite(!task.isFavorite());
         return taskMapper.toResponse(taskRepository.save(task));
     }
 }

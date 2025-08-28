@@ -26,8 +26,8 @@ public class CategoryServiceImpl implements CategoryService {
     private static final String CATEGORY_NOT_FOUND = "Category not found";
 
     private static final Set<String> ALLOWED_ICONS = Set.of(
-            "briefcase", "book-open", "home", "shopping-cart", "utensils",
-            "dumbbell", "calendar", "heart", "music", "wrench"
+            "briefcase", "user", "shopping-cart", "heart",
+            "home", "car", "book", "music", "camera", "phone"
     );
 
     private void validateCategoryRequest(CategoryRequest request, UUID userId) {

@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -29,5 +31,7 @@ public class TaskRequest {
 
     private TaskPriority priority = TaskPriority.MEDIUM;
 
-//    private UUID userId;
+    private boolean isFavorite = false;
+
+    private List<UUID> categoryIds;
 }

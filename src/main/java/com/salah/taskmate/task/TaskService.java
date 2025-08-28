@@ -18,4 +18,5 @@ public interface TaskService {
     TaskResponse changeStatus(UUID taskId, UUID userId, TaskStatus taskStatus);
     TaskResponse changePriority(UUID taskId, UUID userId, TaskPriority taskPriority);
     TaskResponse addCategories(UUID taskId, UUID userId, List<UUID> categoryIds);
- }
+    TaskResponse toggleFavorite(UUID taskId, UUID id);
+}
