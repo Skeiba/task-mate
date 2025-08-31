@@ -16,9 +16,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -156,5 +158,14 @@ public class TaskServiceImpl implements  TaskService {
 
         task.setFavorite(!task.isFavorite());
         return taskMapper.toResponse(taskRepository.save(task));
+    }
+
+    @Override
+    public List<TaskResponse> getTasksByDate(UUID userId, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+
+        List<Task> tasks = taskRepository.findByUserIdAndDueDateBetween(userId, startOfDay, endOfDay);
+        return tasks.stream().map(taskMapper::toResponse).collect(Collectors.toList());
     }
 }
