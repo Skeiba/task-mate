@@ -21,4 +21,5 @@ public interface TaskService {
     TaskResponse addCategories(UUID taskId, UUID userId, List<UUID> categoryIds);
     TaskResponse toggleFavorite(UUID taskId, UUID id);
     List<TaskResponse> getTasksByDate(UUID userId, LocalDate date);
+    UUID getTaskByTitle(String naturalLanguageInput, UUID userId);
 }

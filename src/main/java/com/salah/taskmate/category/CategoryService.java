@@ -4,6 +4,7 @@ import com.salah.taskmate.category.dto.CategoryRequest;
 import com.salah.taskmate.category.dto.CategoryResponse;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,4 +16,6 @@ public interface CategoryService {
     void deleteCategory(UUID userId, UUID categoryId);
     List<Category> getCategoriesByIdsAndUserId(List<UUID> categoryIds, UUID userId);
     Set<String> getAllowedIcons();
+
+    Optional<CategoryResponse> findByNameAndUserId(String categoryName, UUID userId);
 }

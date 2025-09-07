@@ -31,11 +31,10 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    //todo: setSecure to true for https (after frontend build)
     private void addJwtCookie(HttpServletResponse response, String token, int maxAgeSeconds) {
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(maxAgeSeconds);
         cookie.setAttribute("SameSite", "Strict");

@@ -53,7 +53,6 @@ public class UserServiceImpl implements UserService {
         return getUserOrThrow(userId);
     }
 
-    //Admin
     @Override
     public UserResponse getUserById(UUID userId) {
         User user = getUserOrThrow(userId);
@@ -127,7 +126,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(savedUser);
     }
 
-    //Current user
     @Override
     public UserResponse getMyProfile(UUID currentUserId) {
         User user = getCurrentUserOrThrow(currentUserId);
@@ -176,7 +174,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    //helper
     private void updateUserFields(User user, UpdateUserRequest request) {
         if (request.getUsername() != null) {
             String username = request.getUsername().trim();

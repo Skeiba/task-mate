@@ -2,6 +2,7 @@ package com.salah.taskmate.task;
 
 import com.salah.taskmate.category.Category;
 import com.salah.taskmate.category.CategoryService;
+import com.salah.taskmate.shared.exception.AiServiceException;
 import com.salah.taskmate.task.enums.TaskPriority;
 import com.salah.taskmate.task.enums.TaskStatus;
 import com.salah.taskmate.task.dto.TaskRequest;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,28 +36,11 @@ public class TaskServiceImpl implements  TaskService {
 
     private static final String TASK_NOT_FOUND_MESSAGE = "Task with id %s not found";
 
-    private void updateTaskStatusIfMissed(Task task){
-        if (task.getDueDate() != null
-                && task.getDueDate().isBefore(LocalDateTime.now())
-                && task.getStatus() != TaskStatus.MISSED
-                && task.getStatus() != TaskStatus.DONE
-        ) {
-            task.setStatus(TaskStatus.MISSED);
-            taskRepository.save(task);
-        }
-    }
-
-    private boolean handleDoneTask(Task task) {
-        if (task.getStatus() == TaskStatus.DONE) {
-            taskRepository.delete(task);
-            return true;
-        }
-        return false;
-    }
-
-
     @Override
     public TaskResponse createTask(UUID userId, TaskRequest taskRequest) {
+
+        taskRequest.setTitle(normalizeText(taskRequest.getTitle()));
+        taskRequest.setContent(normalizeText(taskRequest.getContent()));
 
         if (taskRequest.getDueDate() != null && taskRequest.getDueDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Due date must be in the future");
@@ -84,8 +69,8 @@ public class TaskServiceImpl implements  TaskService {
             throw new IllegalArgumentException("Due date must be in the future");
         }
 
-        task.setTitle(taskRequest.getTitle());
-        task.setContent(taskRequest.getContent());
+        task.setTitle(normalizeText(taskRequest.getTitle()));
+        task.setContent(normalizeText(taskRequest.getContent()));
         task.setDueDate(taskRequest.getDueDate());
         task.setPriority(taskRequest.getPriority());
         task.setStatus(taskRequest.getStatus());
@@ -168,4 +153,37 @@ public class TaskServiceImpl implements  TaskService {
         List<Task> tasks = taskRepository.findByUserIdAndDueDateBetween(userId, startOfDay, endOfDay);
         return tasks.stream().map(taskMapper::toResponse).collect(Collectors.toList());
     }
+
+    @Override
+    public UUID getTaskByTitle(String naturalLanguageInput, UUID userId) {
+        if (naturalLanguageInput == null || naturalLanguageInput.isBlank()) {
+            throw new AiServiceException("Task title cannot be empty", null);
+        }
+        String cleanedTitle = naturalLanguageInput.trim();
+        try {
+            return Optional.ofNullable(taskRepository.findByTitleAndUserId(cleanedTitle, userId))
+                    .orElseThrow(() -> new AiServiceException(
+                            "No task found with title: " + cleanedTitle + " for user " + userId, null));
+        } catch (Exception e) {
+            throw new AiServiceException("Failed to retrieve task by title", e);
+        }
+    }
+
+    private String normalizeText(String text) {
+        if (text == null) return null;
+        return text.trim().replaceAll("\\s+", " ");
+    }
+
+    private void updateTaskStatusIfMissed(Task task){
+        if (task.getDueDate() != null
+                && task.getDueDate().isBefore(LocalDateTime.now())
+                && task.getStatus() != TaskStatus.MISSED
+                && task.getStatus() != TaskStatus.DONE
+        ) {
+            task.setStatus(TaskStatus.MISSED);
+            taskRepository.save(task);
+        }
+    }
+
+
 }

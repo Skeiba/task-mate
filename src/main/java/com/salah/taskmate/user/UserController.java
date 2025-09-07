@@ -26,7 +26,6 @@ public class UserController {
 
     private final UserService userService;
 
-    //Admin
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     @StandardApiResponse(message = "User retrieved successfully")
@@ -118,7 +117,6 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    //Current user
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @StandardApiResponse(message = "Current user profile retrieved successfully")

@@ -22,6 +22,7 @@ public class EmailService {
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
+    //use this when you use Google SMTP for production
 //    @Value("${email.from}")
 //    private String from;
 
@@ -40,7 +41,6 @@ public class EmailService {
     }
 
     public void sendResetPasswordEmail(String to, String token) {
-        //todo : remove html after testing
         String resetLink = frontendUrl + "/reset-password?token=" + token;
 
         String content = contentBuilder.build("reset-password", Map.of(
@@ -58,6 +58,6 @@ public class EmailService {
                 "year", Year.now().getValue()
         ));
 
-        sendHtmlEmail(to, "🎉 Welcome to TaskMate", content);
+        sendHtmlEmail(to, "Welcome to TaskMate", content);
     }
 }

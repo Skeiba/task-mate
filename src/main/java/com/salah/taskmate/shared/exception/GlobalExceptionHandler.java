@@ -95,4 +95,16 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(AiServiceException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAiServiceException(AiServiceException ex) {
+        ApiResponse<Object> response = new ApiResponse<>(
+                false,
+                "AI service error",
+                ex.getMessage(),
+                LocalDateTime.now(),
+                HttpStatus.SERVICE_UNAVAILABLE.value()
+        );
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+    }
 }

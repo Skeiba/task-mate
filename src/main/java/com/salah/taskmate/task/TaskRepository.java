@@ -16,4 +16,6 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     Page<Task> findAllByUserId(UUID userId, Pageable pageable);
 
     List<Task> findByUserIdAndDueDateBetween(UUID userId, LocalDateTime dueDateAfter, LocalDateTime dueDateBefore);
+
+    UUID findByTitleAndUserId(String title, UUID userId);
 }

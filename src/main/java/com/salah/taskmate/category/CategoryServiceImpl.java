@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -108,5 +109,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Set<String> getAllowedIcons() {
         return ALLOWED_ICONS;
+    }
+
+    @Override
+    public Optional<CategoryResponse> findByNameAndUserId(String categoryName, UUID userId) {
+        Category category = categoryRepository.findByNameAndUserId(categoryName, userId);
+        if (category == null) {
+            return Optional.empty();
+        }
+        return Optional.of(categoryMapper.toResponse(category));
     }
 }
